@@ -1,6 +1,6 @@
-name: Python CICD
+name: CI
 
-on: 
+on:
   push:
     branches: [ master ]
   pull_request:
@@ -8,21 +8,64 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-  
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.15.0-alpha.2"
-  
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-  
-      - name: Run tests
-        run: pytest
+        uses: actions/checkout@v4
 
-      - name: Run tests with coverage
-        run: pytest --cov=. --cov-report=term --cov-report=xml
-        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run basic tests
+        run: pytest -q
+
+      - name: Run tests with coverage and HTML report
+        run: |
+          pytest -q \
+            --cov=. \
+            --cov-report=term \
+            --cov-report=xml \
+            --html=report.html \
+            --self-contained-html
+
+      - name: Generate HTML coverage report
+        run: coverage html
+
+      - name: Prepare site folder
+        run: |
+          mkdir site
+          mv report.html site/
+          mv htmlcov site/coverage
+
+      - name: Print report URLs
+        run: |
+          echo "Test Report:"
+          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/report.html"
+          echo "Coverage Report:"
+          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/coverage/index.html"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+
+  deploy:
+    needs: run-tests
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
