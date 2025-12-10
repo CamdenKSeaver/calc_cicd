@@ -5,7 +5,7 @@ root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(root / "src"))
 
 
-from app import add,sub,multiply, divide,log, square, sin, cos, sqrt,percentage
+from app import add,sub,mult, div,log, square, sin, cos, sqrt,percentage
 
 def test_add():
     assert add(5, 6) == 11
@@ -19,21 +19,21 @@ def test_sub_negative():
     assert sub(-5, -3) == -2
 
 def test_multiply():
-    assert multiply(5, 3) == 15
+    assert mult(5, 3) == 15
 
 
 
 def test_multiply_negative():
-    assert multiply(-5, -3) == 15
+    assert mult(-5, -3) == 15
 
 def test_multiply_zero():
-    assert multiply(1, 0) == 0
+    assert mult(1, 0) == 0
 def test_divide():
-    assert divide(10, 2) == 5
+    assert div(10, 2) == 5
 
 def test_divide_by_zero():
     with pytest.raises(ValueError):
-        divide(10, 0)
+        div(10, 0)
 
 def test_log():
     assert log(1) == 0
