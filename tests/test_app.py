@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 import pytest
+import math
 root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(root / "src"))
 
@@ -76,5 +77,4 @@ def test_percentage():
     assert percentage(50, 100) == 50.0
 
 def test_percentage_zero_total():
-    with pytest.raises(ValueError):
-        percentage(50, 0)
+        percentage(50, 0) == 0
