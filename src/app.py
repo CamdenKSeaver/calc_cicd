@@ -34,3 +34,8 @@ def sqrt(x):
     if x < 0:
         raise ValueError("Cant use negative number")
     return math.sqrt(x)
+
+def percentage(percent, val):
+    if val == 0:
+        return 0
+    return (percent / val) * 100
